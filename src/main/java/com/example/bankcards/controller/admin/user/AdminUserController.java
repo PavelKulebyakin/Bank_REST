@@ -38,12 +38,6 @@ public class AdminUserController {
         return ResponseEntity.ok().body(users);
     }
 
-    @GetMapping
-    public ResponseEntity<List<UserResponseDTO>> getAllUsersWithRole(@RequestParam String role) {
-        log.info("Received request to get all users with role : {}", role);
-        return adminUserService.getAllUsersWithRole(role);
-    }
-
     // TODO add paging + filter
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsersWithRoleAndPaging(
