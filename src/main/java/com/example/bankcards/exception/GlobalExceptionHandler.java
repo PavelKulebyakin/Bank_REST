@@ -6,6 +6,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.HandlerMethodValidationException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,12 +16,12 @@ import java.util.Map;
 /**
  * Глобальный обработчик исключений для REST API.
  */
-@ControllerAdvice
+@RestControllerAdvice
 @Log4j2
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    protected ResponseEntity<Map<String,String>> handleValidationException(MethodArgumentNotValidException ex) {
+    protected ResponseEntity<Map<String,String>> handleDTOValidationException(MethodArgumentNotValidException ex) {
         Map<String,String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String filedName = ((FieldError) error).getField();
