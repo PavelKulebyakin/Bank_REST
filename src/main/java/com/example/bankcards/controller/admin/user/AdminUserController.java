@@ -45,7 +45,8 @@ public class AdminUserController {
             @RequestParam(defaultValue = "10") @Min(1) int size,
             @RequestParam(required = false) String role) {
         log.info("Received request to get all users with page : {} and size : {} role : {}", page, size, role);
-        return adminUserService.getAllUsersWithPagingAndRole(page, size, role);
+        List<UserResponseDTO> users = adminUserService.getAllUsersWithPagingAndRole(page, size, role);
+        return  ResponseEntity.ok().body(users);
     }
 
     @GetMapping("/{id}")
