@@ -31,7 +31,7 @@ public class AdminUserController {
         return ResponseEntity.created(URI.create("/admin/user/" + newUser.getId())).body(newUser);
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<UserResponseDTO>> getAllUsers() {
         log.info("Received request to get all users");
         List<UserResponseDTO> users = adminUserService.getAllUsers();
