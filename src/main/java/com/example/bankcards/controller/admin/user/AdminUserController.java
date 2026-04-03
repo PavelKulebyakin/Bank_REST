@@ -41,7 +41,7 @@ public class AdminUserController {
     // TODO add paging + filter
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsersWithRoleAndPaging(
-            @RequestParam(defaultValue = "0") @Min(0) int page,
+            @RequestParam(defaultValue = "1") @Min(1) int page,
             @RequestParam(defaultValue = "10") @Min(1) int size,
             @RequestParam(required = false) String role) {
         log.info("Received request to get all users with page : {} and size : {} role : {}", page, size, role);
