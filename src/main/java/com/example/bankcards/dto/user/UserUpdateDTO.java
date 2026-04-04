@@ -18,20 +18,17 @@ public class UserUpdateDTO {
      * Полное имя пользователя.
      * Формат: "Фамилия Имя".
      */
-    @NotBlank(message = "Full name is required")
     private String fullName;
 
     /**
      * Email пользователя.
      */
-    @NotBlank(message = "Email is required")
     @Email(message = "Email should be valid")
     private String email;
 
     /**
      * Пароль пользователя.
      */
-    @NotBlank(message = "Password is required")
     private String password;
 
     /**

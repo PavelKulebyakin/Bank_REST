@@ -5,7 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO для возврата данных пользователя клиенту.
+ * DTO для возврата данных пользователя.
  */
 @Data
 @NoArgsConstructor
