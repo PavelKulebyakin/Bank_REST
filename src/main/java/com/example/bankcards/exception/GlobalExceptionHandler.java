@@ -59,6 +59,8 @@ public class GlobalExceptionHandler {
 
     // TODO add entity not found exception
 
+    // TODO resource already exists exception
+
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Map<String,String>> handleException(Exception ex) {
         log.error(ex.getMessage(), ex);

@@ -2,7 +2,6 @@ package com.example.bankcards.controller.user;
 
 import com.example.bankcards.dto.card.CardBalanceDTO;
 import com.example.bankcards.dto.card.CardResponseDTO;
-import com.example.bankcards.dto.transfer.TransferDTO;
 import com.example.bankcards.service.UserCardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
