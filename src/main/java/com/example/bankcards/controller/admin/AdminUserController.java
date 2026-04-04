@@ -1,4 +1,4 @@
-package com.example.bankcards.controller.admin.user;
+package com.example.bankcards.controller.admin;
 
 import com.example.bankcards.dto.user.UserCreateDTO;
 import com.example.bankcards.dto.user.UserResponseDTO;
@@ -38,7 +38,6 @@ public class AdminUserController {
         return ResponseEntity.ok().body(users);
     }
 
-    // TODO add paging + filter
     @GetMapping
     public ResponseEntity<List<UserResponseDTO>> getAllUsersWithRoleAndPaging(
             @RequestParam(defaultValue = "1") @Min(1) int page,
