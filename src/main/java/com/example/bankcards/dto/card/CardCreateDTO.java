@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * DTO для создания новой банковской карты администратором.
+ * DTO для создания новой банковской карты.
  */
 @Data
 @NoArgsConstructor
@@ -15,16 +15,16 @@ import lombok.NoArgsConstructor;
 public class CardCreateDTO {
 
     /**
-     * Имя владельца карты в формате "ФАМИЛИЯ ИМЯ".
-     */
-    @NotBlank(message = "Cardholder name is required")
-    private String cardholderName;
-
-    /**
      * Id пользователя.
      */
     @NotNull(message = "User ID is required")
     private Long userId;
+
+    /**
+     * Имя владельца карты в формате "Фамилия Имя".
+     */
+    @NotBlank(message = "Cardholder name is required")
+    private String cardholderName;
 
     /**
      * Срок действия карты в годах.
