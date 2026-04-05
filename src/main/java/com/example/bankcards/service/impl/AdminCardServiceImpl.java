@@ -1,7 +1,7 @@
 package com.example.bankcards.service.impl;
 
 import com.example.bankcards.dto.card.CardCreateDTO;
-import com.example.bankcards.dto.card.CardResponseDTO;
+import com.example.bankcards.dto.card.CardInfoResponseDTO;
 import com.example.bankcards.dto.card.CardStatusUpdateDTO;
 import com.example.bankcards.entity.CardEntity;
 import com.example.bankcards.entity.CardStatus;
@@ -12,6 +12,9 @@ import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.AdminCardService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,7 +36,7 @@ public class AdminCardServiceImpl implements AdminCardService {
 
     @Override
     @Transactional
-    public CardResponseDTO addNewCard(CardCreateDTO dto) {
+    public CardInfoResponseDTO addNewCard(CardCreateDTO dto) {
         UserEntity user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id: " + dto.getUserId() + " не найден"));
 
@@ -51,7 +54,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     }
 
     @Override
-    public List<CardResponseDTO> getAllCards() {
+    public List<CardInfoResponseDTO> getAllCards() {
         return cardRepository
                 .findAll()
                 .stream()
@@ -59,14 +62,40 @@ public class AdminCardServiceImpl implements AdminCardService {
                 .toList();
     }
 
-    // TODO add filters and pagination
     @Override
-    public List<CardResponseDTO> getAllCardsWithStatusAndPaging(String status, int page, int size) {
-        return getAllCards();
+    public List<CardInfoResponseDTO> getAllCardsWithStatusAndPaging(String status, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        if (status == null || status.isBlank()) {
+            return getAllCardsWithPaging(pageable);
+        } else {
+            return getCardsByStatusAndPaging(status, pageable);
+        }
+    }
+
+    private List<CardInfoResponseDTO> getAllCardsWithPaging(Pageable pageable) {
+        Page<CardEntity> cardsPage = cardRepository.findAll(pageable);
+        return cardsPage.stream()
+                .map(cardMapper::toDto)
+                .toList();
+    }
+
+    private List<CardInfoResponseDTO> getCardsByStatusAndPaging(String status, Pageable pageable) {
+        CardStatus cardStatus;
+        try {
+            cardStatus = CardStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalArgumentException("Неправильный статус карты: " + status);
+        }
+
+        Page<CardEntity> cardsPage = cardRepository.findAllByStatus(cardStatus, pageable);
+        return cardsPage.stream()
+                .map(cardMapper::toDto)
+                .toList();
     }
 
     @Override
-    public CardResponseDTO getCardById(Long id) {
+    public CardInfoResponseDTO getCardById(Long id) {
         CardEntity card = cardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Карта с id " + id + " не найдена"));
         return cardMapper.toDto(card);
@@ -82,7 +111,7 @@ public class AdminCardServiceImpl implements AdminCardService {
 
     @Override
     @Transactional
-    public CardResponseDTO updateCardStatusById(Long id, CardStatusUpdateDTO dto) {
+    public CardInfoResponseDTO updateCardStatusById(Long id, CardStatusUpdateDTO dto) {
         CardEntity card = cardRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Карта с id " + id + " не найдена"));
 
