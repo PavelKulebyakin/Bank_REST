@@ -4,6 +4,7 @@ import com.example.bankcards.exception.custom.InvalidRoleException;
 import com.example.bankcards.exception.custom.ResourceAlreadyExistsException;
 import com.example.bankcards.exception.custom.ResourceNotFoundException;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
@@ -41,11 +42,13 @@ public class GlobalExceptionHandler {
         Map<String, String> errors = new HashMap<>();
 
         ex.getParameterValidationResults().forEach(paramResult ->
-            paramResult.getResolvableErrors().forEach(error -> {
-                String paramName = paramResult.getMethodParameter().getParameterName();
-                String errorMsg = error.getDefaultMessage();
-                errors.put(paramName, errorMsg);
-            })
+                paramResult.getResolvableErrors().forEach(error -> {
+                    if (error instanceof FieldError fieldError) {
+                        errors.put(fieldError.getField(), fieldError.getDefaultMessage());
+                    } else {
+                        errors.put(paramResult.getMethodParameter().getParameterName(), error.getDefaultMessage());
+                    }
+                })
         );
 
         log.warn("Handler method validation failed: {}", errors);
