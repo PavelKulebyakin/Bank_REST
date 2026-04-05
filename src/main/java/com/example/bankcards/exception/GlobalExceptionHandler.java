@@ -1,6 +1,8 @@
 package com.example.bankcards.exception;
 
 import com.example.bankcards.exception.custom.InvalidRoleException;
+import com.example.bankcards.exception.custom.ResourceAlreadyExistsException;
+import com.example.bankcards.exception.custom.ResourceNotFoundException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -58,7 +60,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-    // TODO add entity not found exception
+    @ExceptionHandler(ResourceAlreadyExistsException.class)
+    protected ResponseEntity<Map<String, String>> handleResourceAlreadyExistsException(ResourceAlreadyExistsException ex) {
+        log.warn(ex.getMessage());
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    protected ResponseEntity<Map<String, String>> handleResourceNotFoundException(ResourceNotFoundException ex) {
+        log.warn(ex.getMessage());
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+    }
 
     @ExceptionHandler(InvalidRoleException.class)
     protected ResponseEntity<Map<String, String>> handleInvalidRoleException(InvalidRoleException ex) {
