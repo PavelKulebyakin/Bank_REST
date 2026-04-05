@@ -2,6 +2,8 @@ package com.example.bankcards.controller.user;
 
 import com.example.bankcards.dto.card.CardBalanceDTO;
 import com.example.bankcards.dto.card.CardResponseDTO;
+import com.example.bankcards.dto.card.CardBalanceResponseDTO;
+import com.example.bankcards.dto.card.CardInfoResponseDTO;
 import com.example.bankcards.service.UserCardService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -20,8 +22,9 @@ public class UserCardController {
 
     @GetMapping
     public ResponseEntity<List<CardResponseDTO>> getUserCards() {
+    public ResponseEntity<List<CardInfoResponseDTO>> getUserCards(
         log.info("Resieved request to get all cards");
-        List<CardResponseDTO> cards = userCardService.getAllCards();
+        List<CardInfoResponseDTO> cards = userCardService.getAllCards(user.getId());
         return ResponseEntity.ok().body(cards);
     }
 
@@ -46,16 +49,18 @@ public class UserCardController {
             @RequestParam String status,
             @RequestParam Integer page,
             @RequestParam Integer size) {
+    public ResponseEntity<List<CardInfoResponseDTO>> getUserCardsByStatusWithPagination(
         log.info("Received request to get cards with status {}, page {} and size {}", status, page, size);
-        List<CardResponseDTO> cards = userCardService.getAllCardsWithStatusAndPaging(status, page, size);
+        List<CardInfoResponseDTO> cards = userCardService.getAllCardsWithStatusAndPaging(user.getId(), status, page, size);
         return ResponseEntity.ok().body(cards);
     }
 
     @GetMapping(params = "pan_last_4")
     public ResponseEntity<List<CardResponseDTO>> getUserCardsByPan(@RequestParam("pan_last_4") String panLast4) {
+    public ResponseEntity<CardInfoResponseDTO> getUserCardsByPan(
         log.info("Received request to get cards with last 4 digits {}", panLast4);
-        List<CardResponseDTO> cards = userCardService.getAllCardsByPanLastDigits(panLast4);
-        return ResponseEntity.ok().body(cards);
+        CardInfoResponseDTO card = userCardService.getAllCardsByPanLastDigits(user.getId(), panLast4);
+        return ResponseEntity.ok().body(card);
     }
 
     @GetMapping(params = "id")
@@ -63,12 +68,16 @@ public class UserCardController {
         log.info("Received request to get card with ID {}", id);
         List<CardResponseDTO> cards = userCardService.getAllCardsById(id);
         return ResponseEntity.ok().body(cards);
+    public ResponseEntity<CardInfoResponseDTO> getUserCardsById(
+        CardInfoResponseDTO card = userCardService.getCardsById(user.getId(), cardId);
     }
 
     @GetMapping("/{id}/balance")
     public ResponseEntity<CardBalanceDTO> getCardBalance(@PathVariable Long id) {
         log.info("Received request to get balance for card ID {}", id);
         CardBalanceDTO balance = userCardService.getCardBalance(id);
+    public ResponseEntity<CardBalanceResponseDTO> getCardBalance(
+        CardBalanceResponseDTO balance = userCardService.getCardBalance(user.getId(), cardId);
         return ResponseEntity.ok().body(balance);
     }
 

@@ -1,7 +1,7 @@
 package com.example.bankcards.controller.admin;
 
 import com.example.bankcards.dto.card.CardCreateDTO;
-import com.example.bankcards.dto.card.CardResponseDTO;
+import com.example.bankcards.dto.card.CardInfoResponseDTO;
 import com.example.bankcards.dto.card.CardStatusUpdateDTO;
 import com.example.bankcards.service.AdminCardService;
 import lombok.RequiredArgsConstructor;
@@ -21,33 +21,30 @@ public class AdminCardController {
     private final AdminCardService adminCardService;
 
     @PostMapping
-    public ResponseEntity<CardResponseDTO> addNewCard(@RequestBody CardCreateDTO dto) {
+    public ResponseEntity<CardInfoResponseDTO> addNewCard(@RequestBody @Valid CardCreateDTO dto) {
         log.info("Received request to create a new card with data : {}", dto.toString());
-        CardResponseDTO newCard = adminCardService.addNewCard(dto);
-        return ResponseEntity.created(URI.create("/admin/cards" + newCard.getId())).body(newCard);
+        CardInfoResponseDTO newCard = adminCardService.addNewCard(dto);
+        return ResponseEntity.created(URI.create("/admin/cards/" + newCard.id())).body(newCard);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CardResponseDTO>> getAllCards() {
+    public ResponseEntity<List<CardInfoResponseDTO>> getAllCards() {
         log.info("Received request to get all cards");
-        List<CardResponseDTO> cards = adminCardService.getAllCards();
+        List<CardInfoResponseDTO> cards = adminCardService.getAllCards();
         return ResponseEntity.ok().body(cards);
     }
 
     @GetMapping
-    public ResponseEntity<List<CardResponseDTO>> getAllCardsWithStatusAndPaging(
-            @RequestParam int page,
-            @RequestParam int size,
-            @RequestParam String status) {
+    public ResponseEntity<List<CardInfoResponseDTO>> getCardsWithStatusAndPaging(
         log.info("Received request to get all cards with page : {}, size : {}, status : {}", page, size, status);
-        List<CardResponseDTO> cards = adminCardService.getAllCardsWithStatusAndPaging(status, page, size);
+        List<CardInfoResponseDTO> cards = adminCardService.getAllCardsWithStatusAndPaging(status, page, size);
         return ResponseEntity.ok().body(cards);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CardResponseDTO> getCardById(@PathVariable Long id) {
+    public ResponseEntity<CardInfoResponseDTO> getCardById(@PathVariable @Min(1) Long id) {
         log.info("Received request to get card with id : {}", id);
-        CardResponseDTO card = adminCardService.getCardById(id);
+        CardInfoResponseDTO card = adminCardService.getCardById(id);
         return ResponseEntity.ok().body(card);
     }
 
@@ -59,11 +56,9 @@ public class AdminCardController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CardResponseDTO> updateCardStatusById(
-            @PathVariable Long id,
-            @RequestBody CardStatusUpdateDTO dto) {
+    public ResponseEntity<CardInfoResponseDTO> updateCardStatusById(
         log.info("Received request to update card status with id : {}, new status : {}", id, dto.getStatus());
-        CardResponseDTO card = adminCardService.updateCardStatusById(id, dto);
+        CardInfoResponseDTO card = adminCardService.updateCardStatusById(id, dto);
         return ResponseEntity.ok().body(card);
     }
 }
