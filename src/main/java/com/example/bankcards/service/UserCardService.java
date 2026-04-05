@@ -1,24 +1,20 @@
 package com.example.bankcards.service;
 
-import com.example.bankcards.dto.card.CardBalanceDTO;
-import com.example.bankcards.dto.card.CardResponseDTO;
+import com.example.bankcards.dto.card.CardBalanceResponseDTO;
+import com.example.bankcards.dto.card.CardInfoResponseDTO;
 
 import java.util.List;
 
 public interface UserCardService {
-    List<CardResponseDTO> getAllCards();
+    List<CardInfoResponseDTO> getAllCards(Long userId);
 
-    List<CardResponseDTO> getAllCardsWithPaging(Integer page, Integer size);
+    CardInfoResponseDTO getAllCardsByPanLastDigits(Long userId, String panLast4);
 
-    List<CardResponseDTO> getAllCardsWithStatus(String status);
+    CardInfoResponseDTO getCardsById(Long userId, Long cardId);
 
-    List<CardResponseDTO> getAllCardsByPanLastDigits(String panLast4);
+    CardBalanceResponseDTO getCardBalance(Long userId, Long cardId);
 
-    List<CardResponseDTO> getAllCardsById(Long id);
+    void blockCard(Long userId, Long cardId);
 
-    CardBalanceDTO getCardBalance(Long id);
-
-    void blockCard(Long id);
-
-    List<CardResponseDTO> getAllCardsWithStatusAndPaging(String status, Integer page, Integer size);
+    List<CardInfoResponseDTO> getAllCardsWithStatusAndPaging(Long userId, String status, Integer page, Integer size);
 }
