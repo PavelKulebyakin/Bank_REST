@@ -31,7 +31,8 @@ spring:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
   liquibase:
-    enabled: false
+    change-log: classpath:/db/migration/init-changelog.yaml
+    enabled: true
 
 springdoc:
   api-docs:
