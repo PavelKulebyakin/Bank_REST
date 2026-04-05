@@ -1,0 +1,204 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1775396451392-1
+      author: paul
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            tableName: cards
+            columns:
+              - column:
+                  name: id
+                  autoIncrement: true
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_cards
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: card_number
+                  type: VARCHAR(16)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_cards_card_number
+              - column:
+                  name: last4digits
+                  type: CHAR(4)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: cardholder_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: expiration_date
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: VARCHAR(20)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: balance
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+                    defaultValueNumeric: 0
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    defaultValueComputed: CURRENT_TIMESTAMP
+                    nullable: false
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+  - changeSet:
+      id: 1775396451392-2
+      author: paul
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            tableName: transfers
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_transfers
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: from_card_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: to_card_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+              - column:
+                  name: amount
+                  type: DECIMAL(19,2)
+                  constraints:
+                    nullable: false
+                    defaultValueNumeric: 0
+              - column:
+                  name: created_at
+                  type: DATETIME
+                  constraints:
+                    nullable: false
+                    defaultValueComputed: CURRENT_TIMESTAMP
+  - changeSet:
+      id: 1775396451392-3
+      author: paul
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  autoIncrement: true
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_users
+                  name: id
+                  type: BIGINT
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+                    uniqueConstraintName: uq_users_email
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: role
+                  type: VARCHAR(50)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: created_at
+                  type: TIMESTAMP
+                  constraints:
+                    nullable: false
+                    defaultValueComputed: CURRENT_TIMESTAMP
+              - column:
+                  name: updated_at
+                  type: TIMESTAMP
+  - changeSet:
+      id: 1775396451392-4
+      author: paul
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: user_id
+            baseTableName: cards
+            constraintName: FK_CARDS_ON_USER
+            referencedColumnNames: id
+            referencedTableName: users
+  - changeSet:
+      id: 1775396451392-5
+      author: paul
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: from_card_id
+            baseTableName: transfers
+            constraintName: FK_TRANSFERS_ON_FROM_CARD
+            referencedColumnNames: id
+            referencedTableName: cards
+  - changeSet:
+      id: 1775396451392-6
+      author: paul
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: to_card_id
+            baseTableName: transfers
+            constraintName: FK_TRANSFERS_ON_TO_CARD
+            referencedColumnNames: id
+            referencedTableName: cards
+  - changeSet:
+      id: 1775396451392-7
+      author: pavel
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: full_name
+                  value: Admin User
+              - column:
+                  name: email
+                  value: admin@example.com
+              - column:
+                  name: password
+                  value: "$2a$10$sYr73ZJGqxFiyBkaSE1gauxs1vgKq3jgKa9V/AhuFTbJS1fDAzcsm"
+              - column:
+                  name: role
+                  value: ADMIN
+              - column:
+                  name: created_at
+                  valueComputed: CURRENT_TIMESTAMP
