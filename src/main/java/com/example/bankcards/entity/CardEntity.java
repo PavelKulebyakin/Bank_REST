@@ -25,11 +25,11 @@ public class CardEntity {
 
     private String cardNumber;
 
+    @Column(name = "last4digits")
     private String last4Digits;
 
     private String cardholderName;
 
-    // ?????
     private LocalDateTime expirationDate;
 
     @Enumerated(EnumType.STRING)
