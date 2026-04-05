@@ -1,31 +1,28 @@
 package com.example.bankcards.mapper;
 
 import com.example.bankcards.dto.user.UserCreateDTO;
-import com.example.bankcards.dto.user.UserResponseDTO;
+import com.example.bankcards.dto.user.UserInfoResponseDTO;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.UserEntity;
 import com.example.bankcards.exception.custom.InvalidRoleException;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
-import org.mapstruct.factory.Mappers;
 
 import static org.mapstruct.MappingConstants.ComponentModel.SPRING;
 
 @Mapper(componentModel = SPRING)
 public interface UserMapper {
 
-    UserMapper INSTANCE = Mappers.getMapper(UserMapper.class);
-
     @Mapping(target = "role", source = "role", qualifiedByName = "stringToRole")
     UserEntity toEntity(UserCreateDTO dto);
 
     @Mapping(target = "role", source = "role", qualifiedByName = "roleToString")
-    UserResponseDTO toDto(UserEntity entity);
+    UserInfoResponseDTO toDto(UserEntity entity);
 
     @Named("stringToRole")
     static Role stringToRole(String role) {
-        if (role == null) return Role.USER;
+        if (role == null || role.isBlank()) return Role.USER;
         try {
             return Role.valueOf(role.toUpperCase());
         } catch (IllegalArgumentException e) {
