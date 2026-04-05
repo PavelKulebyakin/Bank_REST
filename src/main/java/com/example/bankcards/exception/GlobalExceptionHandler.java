@@ -1,5 +1,6 @@
 package com.example.bankcards.exception;
 
+import com.example.bankcards.exception.custom.InvalidRoleException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +50,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(errors);
     }
 
-
     @ExceptionHandler(HttpMessageNotReadableException.class)
     protected ResponseEntity<Map<String, String>> handleJsonParseException(HttpMessageNotReadableException ex) {
         log.warn(ex.getMessage(), ex);
@@ -59,7 +60,25 @@ public class GlobalExceptionHandler {
 
     // TODO add entity not found exception
 
-    // TODO resource already exists exception
+    @ExceptionHandler(InvalidRoleException.class)
+    protected ResponseEntity<Map<String, String>> handleInvalidRoleException(InvalidRoleException ex) {
+        log.warn(ex.getMessage());
+        Map<String, String> error = new HashMap<>();
+        error.put("message", ex.getMessage());
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    protected ResponseEntity<Map<String, String>> handleMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException ex) {
+        Map<String, String> errors = new HashMap<>();
+        String name = ex.getName();
+        Object value = ex.getValue();
+        String requiredType = ex.getRequiredType() != null ? ex.getRequiredType().getSimpleName() : "Unknown";
+        String message = String.format("Parameter '%s' with value '%s' could not be converted to type %s",
+                name, value, requiredType);
+        errors.put(name, message);
+        return ResponseEntity.badRequest().body(errors);
+    }
 
     @ExceptionHandler(Exception.class)
     protected ResponseEntity<Map<String,String>> handleException(Exception ex) {
