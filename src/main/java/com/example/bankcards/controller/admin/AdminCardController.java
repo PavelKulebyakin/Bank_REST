@@ -4,6 +4,8 @@ import com.example.bankcards.dto.card.CardCreateDTO;
 import com.example.bankcards.dto.card.CardInfoResponseDTO;
 import com.example.bankcards.dto.card.CardStatusUpdateDTO;
 import com.example.bankcards.service.AdminCardService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,9 @@ public class AdminCardController {
 
     @GetMapping
     public ResponseEntity<List<CardInfoResponseDTO>> getCardsWithStatusAndPaging(
+            @RequestParam(defaultValue = "1") @Min(1) int page,
+            @RequestParam(defaultValue = "10") @Min(1) int size,
+            @RequestParam(required = false) String status) {
         log.info("Received request to get all cards with page : {}, size : {}, status : {}", page, size, status);
         List<CardInfoResponseDTO> cards = adminCardService.getAllCardsWithStatusAndPaging(status, page, size);
         return ResponseEntity.ok().body(cards);
@@ -49,7 +54,7 @@ public class AdminCardController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCardById(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCardById(@PathVariable @Min(1) long id) {
         log.info("Received request to delete card with id : {}", id);
         adminCardService.deleteCardById(id);
         return ResponseEntity.noContent().build();
@@ -57,6 +62,8 @@ public class AdminCardController {
 
     @PutMapping("/{id}")
     public ResponseEntity<CardInfoResponseDTO> updateCardStatusById(
+            @PathVariable @Min(1) long id,
+            @RequestBody @Valid CardStatusUpdateDTO dto) {
         log.info("Received request to update card status with id : {}, new status : {}", id, dto.getStatus());
         CardInfoResponseDTO card = adminCardService.updateCardStatusById(id, dto);
         return ResponseEntity.ok().body(card);
