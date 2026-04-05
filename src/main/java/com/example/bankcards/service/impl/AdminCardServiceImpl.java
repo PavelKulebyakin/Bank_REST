@@ -24,9 +24,12 @@ import java.util.Random;
 @RequiredArgsConstructor
 public class AdminCardServiceImpl implements AdminCardService {
 
+    private static final int DEFAULT_VALIDITY_YEARS = 4;
+
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final CardMapper cardMapper;
+
 
     @Override
     @Transactional
@@ -105,6 +108,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     }
 
     private LocalDateTime calculateExpirationDate(Integer validityPeriod) {
-        return LocalDateTime.now().plusYears(validityPeriod);
+        int years = (validityPeriod == null) ? DEFAULT_VALIDITY_YEARS : validityPeriod;
+        return LocalDateTime.now().plusYears(years);
     }
 }
