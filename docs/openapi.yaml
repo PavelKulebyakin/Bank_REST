@@ -1,7 +1,7 @@
 openapi: 3.1.0
 info:
-  title: OpenAPI definition
-  version: v0
+  title: Bank Cards API
+  version: "1.0"
 servers:
   - url: http://localhost:8080/api
     description: Generated server url
@@ -66,26 +66,7 @@ paths:
       responses:
         "200":
           description: OK
-  /admin/cards/{id}:
-    get:
-      tags:
-        - admin-card-controller
-      operationId: getCardById
-      parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-            minimum: 1
-      responses:
-        "200":
-          description: OK
-          content:
-            '*/*':
-              schema:
-                $ref: "#/components/schemas/CardInfoResponseDTO"
+  /admin/cards/{id}/status:
     put:
       tags:
         - admin-card-controller
@@ -111,10 +92,11 @@ paths:
             '*/*':
               schema:
                 $ref: "#/components/schemas/CardInfoResponseDTO"
-    delete:
+  /admin/cards/{id}/balance:
+    put:
       tags:
         - admin-card-controller
-      operationId: deleteCardById
+      operationId: updateCardBalanceById
       parameters:
         - name: id
           in: path
@@ -123,9 +105,19 @@ paths:
             type: integer
             format: int64
             minimum: 1
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CardBalanceUpdateDTO"
+        required: true
       responses:
         "200":
           description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardInfoResponseDTO"
   /me/transfer:
     post:
       tags:
@@ -172,7 +164,7 @@ paths:
           content:
             '*/*':
               schema:
-                $ref: "#/components/schemas/AuthResponse"
+                $ref: "#/components/schemas/AuthResponseDTO"
   /admin/user:
     get:
       tags:
@@ -355,7 +347,7 @@ paths:
     get:
       tags:
         - user-card-controller
-      operationId: getUserCardsByPan
+      operationId: getUserCardsByLast4
       parameters:
         - name: last_4
           in: query
@@ -397,6 +389,41 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/UserInfoResponseDTO"
+  /admin/cards/{id}:
+    get:
+      tags:
+        - admin-card-controller
+      operationId: getCardById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        "200":
+          description: OK
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/CardInfoResponseDTO"
+    delete:
+      tags:
+        - admin-card-controller
+      operationId: deleteCardById
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+            minimum: 1
+      responses:
+        "200":
+          description: OK
   /admin/cards/all:
     get:
       tags:
@@ -451,7 +478,7 @@ components:
         id:
           type: integer
           format: int64
-        last4Digits:
+        maskedNumber:
           type: string
         cardholderName:
           type: string
@@ -459,6 +486,14 @@ components:
           type: string
         status:
           type: string
+    CardBalanceUpdateDTO:
+      type: object
+      properties:
+        balance:
+          type: number
+          minimum: 1
+      required:
+        - balance
     TransferDTO:
       type: object
       properties:
@@ -487,7 +522,7 @@ components:
       required:
         - email
         - password
-    AuthResponse:
+    AuthResponseDTO:
       type: object
       properties:
         accessToken:
@@ -534,3 +569,8 @@ components:
           format: int64
         balance:
           type: number
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
