@@ -1,6 +1,6 @@
 package com.example.bankcards.controller.auth;
 
-import com.example.bankcards.dto.AuthResponseDTO;
+import com.example.bankcards.dto.auth.AuthResponseDTO;
 import com.example.bankcards.dto.auth.AuthRequestDTO;
 import com.example.bankcards.service.AuthService;
 import jakarta.validation.Valid;
