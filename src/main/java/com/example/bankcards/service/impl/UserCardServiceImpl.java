@@ -62,8 +62,10 @@ class UserCardServiceImpl implements UserCardService {
     public void blockCard(Long userId, Long cardId) {
         CardEntity card = cardRepository.findByIdAndUserId(cardId, userId)
                 .orElseThrow(() -> new ResourceNotFoundException("Card with id : " + cardId + " not found"));
+
+        // Можно добавить статус REQUEST_BLOCK если мы не хотим чтобы пользователь мог сам блокировать карту
         if (card.getStatus() == CardStatus.BLOCKED) {
-            throw new IllegalStateException("Карта уже заблокирована");
+            throw new IllegalStateException("Card is already blocked");
         }
         card.setStatus(CardStatus.BLOCKED);
         cardRepository.save(card);

@@ -24,6 +24,7 @@ class TransferServiceImpl implements TransferService {
         CardEntity fromCard = cardRepository.findByIdAndUserId(dto.getFromId(), id)
                 .orElseThrow(() -> new ResourceNotFoundException("Card with id: " + dto.getFromId() + " not found"));
 
+        // Можно добавить проверку на то что это то же самый пользователь если мы не хотим переводить деньги между пользователями
         CardEntity toCard = cardRepository.findById(dto.getToId())
                 .orElseThrow(() -> new ResourceNotFoundException("Card with id: " + dto.getToId() + " not found"));
 

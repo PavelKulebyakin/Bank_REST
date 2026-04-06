@@ -24,7 +24,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bank_db
       SPRING_DATASOURCE_USERNAME: db_user
       SPRING_DATASOURCE_PASSWORD: password
-      JWT_SECRET: j+qc+2AIYSJHw5/obRr8EYLNw7QFKJX86WioA/S2zSk=
+      JWT_SECRET: j+qc+2AIYSJHw5/obRr8EYLNw7QFKJX86WioA/S2zSk= # Only for development
 
 volumes:
   postgres_data:

@@ -121,6 +121,7 @@ public class AdminCardServiceImpl implements AdminCardService {
         return cardMapper.toDto(savedCard);
     }
 
+    // Basic card number generation
     @Transactional
     protected String generateUniqueCardNumber() {
         String cardNumber;
