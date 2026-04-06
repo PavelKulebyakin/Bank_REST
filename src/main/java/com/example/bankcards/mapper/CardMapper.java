@@ -17,6 +17,7 @@ public interface CardMapper {
 
     @Mapping(target = "expirationDate", source = "expirationDate", qualifiedByName = "expirationDateToString")
     @Mapping(target = "status", source = "status", qualifiedByName = "statusToString")
+    @Mapping(target = "maskedNumber", source = "last4Digits", qualifiedByName = "maskCardNumber")
     CardInfoResponseDTO toDto(CardEntity card);
 
     @Named("statusToString")
@@ -27,5 +28,10 @@ public interface CardMapper {
     @Named("expirationDateToString")
     static String formatExpirationDate(LocalDateTime expirationDate) {
         return expirationDate.format(DateTimeFormatter.ofPattern("MM/yy"));
+    }
+
+    @Named("maskCardNumber")
+    static String maskCardNumber(String last4Digits) {
+        return "**** **** **** " + last4Digits;
     }
 }
