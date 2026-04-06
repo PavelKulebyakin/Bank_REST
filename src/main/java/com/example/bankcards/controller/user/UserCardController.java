@@ -42,7 +42,7 @@ public class UserCardController {
     }
 
     @GetMapping("/pan")
-    public ResponseEntity<CardInfoResponseDTO> getUserCardsByPan(
+    public ResponseEntity<CardInfoResponseDTO> getUserCardsByLast4(
             @AuthenticationPrincipal CustomUserDetails user,
             @RequestParam("last_4") String panLast4) {
         log.info("Received request to get cards with last 4 digits {}", panLast4);
