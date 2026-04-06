@@ -1,5 +1,6 @@
 package com.example.bankcards.service.impl;
 
+import com.example.bankcards.dto.card.CardBalanceUpdateDTO;
 import com.example.bankcards.dto.card.CardCreateDTO;
 import com.example.bankcards.dto.card.CardInfoResponseDTO;
 import com.example.bankcards.dto.card.CardStatusUpdateDTO;
@@ -116,6 +117,18 @@ public class AdminCardServiceImpl implements AdminCardService {
                 .orElseThrow(() -> new ResourceNotFoundException("Card with " + id + " not found"));
 
         card.setStatus(CardStatus.valueOf(dto.getStatus()));
+
+        CardEntity savedCard = cardRepository.save(card);
+        return cardMapper.toDto(savedCard);
+    }
+
+    // Card balance update is not specified in specification
+    @Override
+    public CardInfoResponseDTO updateCardBalance(long id, CardBalanceUpdateDTO dto) {
+        CardEntity card = cardRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Card with " + id + " not found"));
+
+        card.setBalance(dto.getBalance());
 
         CardEntity savedCard = cardRepository.save(card);
         return cardMapper.toDto(savedCard);

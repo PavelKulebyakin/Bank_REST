@@ -1,5 +1,6 @@
 package com.example.bankcards.controller.admin;
 
+import com.example.bankcards.dto.card.CardBalanceUpdateDTO;
 import com.example.bankcards.dto.card.CardCreateDTO;
 import com.example.bankcards.dto.card.CardInfoResponseDTO;
 import com.example.bankcards.dto.card.CardStatusUpdateDTO;
@@ -60,12 +61,21 @@ public class AdminCardController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/status")
     public ResponseEntity<CardInfoResponseDTO> updateCardStatusById(
             @PathVariable @Min(1) long id,
             @RequestBody @Valid CardStatusUpdateDTO dto) {
         log.info("Received request to update card status with id : {}, new status : {}", id, dto.getStatus());
         CardInfoResponseDTO card = adminCardService.updateCardStatusById(id, dto);
+        return ResponseEntity.ok().body(card);
+    }
+
+    @PutMapping("/{id}/balance")
+    public ResponseEntity<CardInfoResponseDTO> updateCardBalanceById(
+            @PathVariable @Min(1) long id,
+            @PathVariable @Min(1) CardBalanceUpdateDTO dto) {
+        log.info("Received request to update card status with id : {}, new status : {}", id, dto.getBalance());
+        CardInfoResponseDTO card = adminCardService.updateCardBalance(id, dto);
         return ResponseEntity.ok().body(card);
     }
 }
