@@ -12,6 +12,7 @@ import com.example.bankcards.mapper.CardMapper;
 import com.example.bankcards.repository.CardRepository;
 import com.example.bankcards.repository.UserRepository;
 import com.example.bankcards.service.AdminCardService;
+import com.example.bankcards.util.EncryptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,6 +34,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     private final CardRepository cardRepository;
     private final UserRepository userRepository;
     private final CardMapper cardMapper;
+    private final EncryptionService encryptionService;
 
 
     @Override
@@ -41,16 +43,28 @@ public class AdminCardServiceImpl implements AdminCardService {
         UserEntity user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User with id: " + dto.getUserId() + " not found"));
 
-        CardEntity cardEntity = CardEntity.builder()
+        String plainCardNumber = generateCardNumber();
+        String encryptedCardNumber;
+        try {
+            encryptedCardNumber = encryptionService.encrypt(plainCardNumber);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to encrypt card number", e);
+        }
+
+        System.out.println("PLAIN: " + plainCardNumber);
+        System.out.println("LAST4: " + plainCardNumber.substring(plainCardNumber.length() - 4));
+
+        CardEntity card = CardEntity.builder()
                 .user(user)
-                .cardNumber(generateUniqueCardNumber())
+                .cardNumber(encryptedCardNumber)
+                .last4Digits(plainCardNumber.substring(12))
                 .cardholderName(dto.getCardholderName())
                 .expirationDate(calculateExpirationDate(dto.getValidityPeriod()))
                 .status(CardStatus.ACTIVE)
                 .balance(BigDecimal.ZERO)
                 .build();
 
-        CardEntity savedCard = cardRepository.save(cardEntity);
+        CardEntity savedCard = cardRepository.save(card);
         return cardMapper.toDto(savedCard);
     }
 
@@ -66,7 +80,6 @@ public class AdminCardServiceImpl implements AdminCardService {
     @Override
     public List<CardInfoResponseDTO> getAllCardsWithStatusAndPaging(String status, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-
         if (status == null || status.isBlank()) {
             return getAllCardsWithPaging(pageable);
         } else {
@@ -88,7 +101,6 @@ public class AdminCardServiceImpl implements AdminCardService {
         } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Invalid status: " + status);
         }
-
         Page<CardEntity> cardsPage = cardRepository.findAllByStatus(cardStatus, pageable);
         return cardsPage.stream()
                 .map(cardMapper::toDto)
@@ -134,20 +146,15 @@ public class AdminCardServiceImpl implements AdminCardService {
         return cardMapper.toDto(savedCard);
     }
 
-    // Basic card number generation
+    // Card number is not unique because it is encrypted
     @Transactional
-    protected String generateUniqueCardNumber() {
-        String cardNumber;
+    protected String generateCardNumber() {
         Random random = new Random();
         StringBuilder sb = new StringBuilder();
-        do {
-            for (int i = 0; i < 16; i++) {
-                sb.append(random.nextInt(10));
-            }
-            cardNumber = sb.toString();
-            sb.setLength(0);
-        } while (cardRepository.existsByCardNumber(cardNumber));
-        return cardNumber;
+        for (int i = 0; i < 16; i++) {
+            sb.append(random.nextInt(10));
+        }
+        return  sb.toString();
     }
 
     private LocalDateTime calculateExpirationDate(Integer validityPeriod) {

@@ -46,9 +46,6 @@ public class CardEntity {
         this.createdAt = LocalDateTime.now();
         this.status = this.status == null ? CardStatus.ACTIVE : this.status;
         this.balance = this.balance == null ? BigDecimal.valueOf(0) : this.balance;
-        if (this.cardNumber != null && this.cardNumber.length() >= 4) {
-            this.last4Digits = this.cardNumber.substring(this.cardNumber.length() - 4);
-        }
     }
 
     @PreUpdate

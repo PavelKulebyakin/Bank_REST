@@ -50,6 +50,7 @@ public class UserCardController {
         return ResponseEntity.ok().body(card);
     }
 
+    // How user should choose exact card is not specified is technical specification
     @GetMapping("/{cardId}")
     public ResponseEntity<CardInfoResponseDTO> getUserCardsById(
             @AuthenticationPrincipal CustomUserDetails user,

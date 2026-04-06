@@ -21,6 +21,7 @@ public class TransferController {
 
     private final TransferService transferService;
 
+    // How user should choose exact card is not specified is technical specification
     @PostMapping
     public ResponseEntity<Void> transferBetweenCards(
             @AuthenticationPrincipal CustomUserDetails user,
