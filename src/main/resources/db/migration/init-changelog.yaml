@@ -182,7 +182,7 @@ databaseChangeLog:
             referencedTableName: cards
   - changeSet:
       id: 1775396451392-7
-      author: pavel
+      author: paul
       changes:
         - insert:
             tableName: users
@@ -202,3 +202,65 @@ databaseChangeLog:
               - column:
                   name: created_at
                   valueComputed: CURRENT_TIMESTAMP
+  - changeSet:
+      id: 1775396451392-8
+      author: paul
+      changes:
+        - createIndex:
+            indexName: idx_card_user_id
+            tableName: cards
+            columns:
+              - column:
+                  name: user_id
+  - changeSet:
+      id: 1775396451392-9
+      author: paul
+      changes:
+        - createIndex:
+            indexName: idx_card_user_last4
+            tableName: cards
+            columns:
+              - column:
+                  name: user_id
+              - column:
+                  name: last4digits
+  - changeSet:
+      id: 1775396451392-10
+      author: pavel
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              CREATE OR REPLACE FUNCTION check_card_expiration()
+              RETURNS TRIGGER AS $$
+              BEGIN
+                  IF NEW.expiration_date < NOW() THEN
+                      NEW.status := 'EXPIRED';
+                  END IF;
+                  RETURN NEW;
+              END;
+              $$ LANGUAGE plpgsql;
+
+  - changeSet:
+      id: 1775396451392-11
+      author: pavel
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              CREATE TRIGGER trigger_expired_before_insert
+              BEFORE INSERT ON cards
+              FOR EACH ROW
+              EXECUTE FUNCTION check_card_expiration();
+
+  - changeSet:
+      id: 1775396451392-12
+      author: pavel
+      changes:
+        - sql:
+            splitStatements: false
+            sql: |
+              CREATE TRIGGER trigger_expired_before_update
+              BEFORE UPDATE OF expiration_date ON cards
+              FOR EACH ROW
+              EXECUTE FUNCTION check_card_expiration();
