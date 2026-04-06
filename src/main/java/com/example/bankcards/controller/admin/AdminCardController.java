@@ -73,8 +73,8 @@ public class AdminCardController {
     @PutMapping("/{id}/balance")
     public ResponseEntity<CardInfoResponseDTO> updateCardBalanceById(
             @PathVariable @Min(1) long id,
-            @PathVariable @Min(1) CardBalanceUpdateDTO dto) {
-        log.info("Received request to update card status with id : {}, new status : {}", id, dto.getBalance());
+            @RequestBody CardBalanceUpdateDTO dto) {
+        log.info("Received request to update card status with id : {}, new balance : {}", id, dto.getBalance());
         CardInfoResponseDTO card = adminCardService.updateCardBalance(id, dto);
         return ResponseEntity.ok().body(card);
     }

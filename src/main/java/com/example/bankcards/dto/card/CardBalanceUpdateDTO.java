@@ -1,5 +1,6 @@
 package com.example.bankcards.dto.card;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -20,5 +21,6 @@ public class CardBalanceUpdateDTO {
      * Допустимые значения: "ACTIVE", "BLOCKED".
      */
     @NotNull(message = "Balance is required")
+    @Min(1)
     private BigDecimal balance;
 }
