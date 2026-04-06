@@ -22,7 +22,7 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<AuthResponseDTO> login(@RequestBody @Valid AuthRequestDTO request) {
-        log.info("Received request to login with email: {}, password: {}", request.getEmail(), request.getPassword());
+        log.info("Login attempt for email: {}", request.getEmail());
         String token = authService.authenticate(request);
         return ResponseEntity.ok().body(new AuthResponseDTO(token));
     }
