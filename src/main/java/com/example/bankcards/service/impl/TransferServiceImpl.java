@@ -22,13 +22,13 @@ class TransferServiceImpl implements TransferService {
     @Transactional
     public void processTransfer(Long id, TransferDTO dto) {
         CardEntity fromCard = cardRepository.findByIdAndUserId(dto.getFromId(), id)
-                .orElseThrow(() -> new ResourceNotFoundException("Карта отправителя не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card with id: " + dto.getFromId() + " not found"));
 
         CardEntity toCard = cardRepository.findById(dto.getToId())
-                .orElseThrow(() -> new ResourceNotFoundException("Карта получателя не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card with id: " + dto.getToId() + " not found"));
 
         if (fromCard.getBalance().compareTo(dto.getAmount()) < 0) {
-            throw new IllegalStateException("Недостаточно средств на карте");
+            throw new IllegalStateException("Insufficient funds");
         }
 
         fromCard.setBalance(fromCard.getBalance().subtract(dto.getAmount()));

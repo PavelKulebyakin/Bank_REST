@@ -35,7 +35,7 @@ class UserCardServiceImpl implements UserCardService {
     @Override
     public CardInfoResponseDTO getAllCardsByPanLastDigits(Long userId, String panLast4) {
         CardEntity card = cardRepository.findFirstByUserIdAndLast4Digits(userId, panLast4)
-                .orElseThrow(() -> new ResourceNotFoundException("Карта с последними 4 цифрами : " + panLast4 + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card wit last 4 digits : " + panLast4 + " not found"));
         return cardMapper.toDto(card);
     }
 
@@ -43,14 +43,14 @@ class UserCardServiceImpl implements UserCardService {
     @Override
     public CardInfoResponseDTO getCardsById(Long userId, Long cardId) {
         CardEntity card = cardRepository.findByIdAndUserId(cardId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Карта с id : " + cardId + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card with id : " + cardId + " not found"));
         return cardMapper.toDto(card);
     }
 
     @Override
     public CardBalanceResponseDTO getCardBalance(Long userId, Long cardId) {
         CardEntity card = cardRepository.findByIdAndUserId(cardId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Карта с id : " + cardId + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card with id: " + cardId + " not found"));
         return CardBalanceResponseDTO.builder()
                 .cardId(card.getId())
                 .balance(card.getBalance())
@@ -61,7 +61,7 @@ class UserCardServiceImpl implements UserCardService {
     @Transactional
     public void blockCard(Long userId, Long cardId) {
         CardEntity card = cardRepository.findByIdAndUserId(cardId, userId)
-                .orElseThrow(() -> new ResourceNotFoundException("Карта с id : " + cardId + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card with id : " + cardId + " not found"));
         if (card.getStatus() == CardStatus.BLOCKED) {
             throw new IllegalStateException("Карта уже заблокирована");
         }
@@ -92,7 +92,7 @@ class UserCardServiceImpl implements UserCardService {
         try {
             cardStatus = CardStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException("Неправильный статус карты: " + status);
+            throw new IllegalArgumentException("Invalid status: " + status);
         }
 
         Page<CardEntity> cardsPage = cardRepository.findAllByUserIdAndStatus(userId, cardStatus, pageable);

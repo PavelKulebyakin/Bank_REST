@@ -33,7 +33,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional
     public UserInfoResponseDTO createUser(UserCreateDTO dto) {
         if (userRepository.existsByEmail(dto.getEmail())) {
-            throw new ResourceAlreadyExistsException("Email уже используется: "  + dto.getEmail());
+            throw new ResourceAlreadyExistsException("Email: " + dto.getEmail() + " already exists");
         }
         UserEntity user = userMapper.toEntity(dto);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -53,7 +53,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Override
     public UserInfoResponseDTO getUserById(Long id) {
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id: " + id + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " is not found"));
         return userMapper.toDto(user);
     }
 
@@ -61,7 +61,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional
     public void deleteUserById(Long id) {
         UserEntity user = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id: " + id + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " is not found"));
         userRepository.delete(user);
     }
 
@@ -69,7 +69,7 @@ public class AdminUserServiceImpl implements AdminUserService {
     @Transactional
     public UserInfoResponseDTO updateUserById(Long id, UserUpdateDTO dto) {
         UserEntity existingUser = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id: " + id + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + id + " is not found"));
 
         if (dto.getFullName() != null && !dto.getFullName().isBlank()) {
             existingUser.setFullName(dto.getFullName());
@@ -111,6 +111,7 @@ public class AdminUserServiceImpl implements AdminUserService {
             userRole = UserMapper.stringToRole(role);
         } catch (InvalidRoleException ex) {
             throw new IllegalArgumentException("Неверная роль пользователя: " + role);
+            throw new IllegalArgumentException("Invalid role: " + role);
         }
 
         Page<UserEntity> usersPage = userRepository.findAllByRole(userRole, pageable);

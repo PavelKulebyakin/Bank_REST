@@ -38,7 +38,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     @Transactional
     public CardInfoResponseDTO addNewCard(CardCreateDTO dto) {
         UserEntity user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Пользователь с id: " + dto.getUserId() + " не найден"));
+                .orElseThrow(() -> new ResourceNotFoundException("User with id: " + dto.getUserId() + " not found"));
 
         CardEntity cardEntity = CardEntity.builder()
                 .user(user)
@@ -85,7 +85,7 @@ public class AdminCardServiceImpl implements AdminCardService {
         try {
             cardStatus = CardStatus.valueOf(status.toUpperCase());
         } catch (IllegalArgumentException ex) {
-            throw new IllegalArgumentException("Неправильный статус карты: " + status);
+            throw new IllegalArgumentException("Invalid status: " + status);
         }
 
         Page<CardEntity> cardsPage = cardRepository.findAllByStatus(cardStatus, pageable);
@@ -97,7 +97,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     @Override
     public CardInfoResponseDTO getCardById(Long id) {
         CardEntity card = cardRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Карта с id " + id + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card id " + id + " not found"));
         return cardMapper.toDto(card);
     }
 
@@ -105,7 +105,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     @Transactional
     public void deleteCardById(Long id) {
         CardEntity card = cardRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Карта с id " + id + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card with " + id + " not found"));
         cardRepository.delete(card);
     }
 
@@ -113,7 +113,7 @@ public class AdminCardServiceImpl implements AdminCardService {
     @Transactional
     public CardInfoResponseDTO updateCardStatusById(Long id, CardStatusUpdateDTO dto) {
         CardEntity card = cardRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Карта с id " + id + " не найдена"));
+                .orElseThrow(() -> new ResourceNotFoundException("Card with " + id + " not found"));
 
         card.setStatus(CardStatus.valueOf(dto.getStatus()));
 
