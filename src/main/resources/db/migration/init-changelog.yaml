@@ -264,3 +264,20 @@ databaseChangeLog:
               BEFORE UPDATE OF expiration_date ON cards
               FOR EACH ROW
               EXECUTE FUNCTION check_card_expiration();
+  - changeSet:
+      id: 1775396451392-13
+      author: pavel
+      changes:
+        - modifyDataType:
+            tableName: cards
+            columnName: card_number
+            newDataType: VARCHAR(255)
+
+  - changeSet:
+      id: 1775396451392-14
+      author: pavel
+      changes:
+        - dropUniqueConstraint:
+            tableName: cards
+            constraintName: uq_cards_card_number
+
