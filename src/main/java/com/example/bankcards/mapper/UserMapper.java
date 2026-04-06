@@ -4,7 +4,6 @@ import com.example.bankcards.dto.user.UserCreateDTO;
 import com.example.bankcards.dto.user.UserInfoResponseDTO;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.UserEntity;
-import com.example.bankcards.exception.custom.InvalidRoleException;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
@@ -26,7 +25,7 @@ public interface UserMapper {
         try {
             return Role.valueOf(role.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidRoleException("Invalid role: " + role);
+            throw new IllegalArgumentException("Invalid role: " + role);
         }
     }
 

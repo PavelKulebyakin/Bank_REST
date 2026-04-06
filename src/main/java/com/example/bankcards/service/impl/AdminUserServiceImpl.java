@@ -5,7 +5,6 @@ import com.example.bankcards.dto.user.UserInfoResponseDTO;
 import com.example.bankcards.dto.user.UserUpdateDTO;
 import com.example.bankcards.entity.Role;
 import com.example.bankcards.entity.UserEntity;
-import com.example.bankcards.exception.custom.InvalidRoleException;
 import com.example.bankcards.exception.custom.ResourceAlreadyExistsException;
 import com.example.bankcards.exception.custom.ResourceNotFoundException;
 import com.example.bankcards.mapper.UserMapper;
@@ -109,8 +108,7 @@ public class AdminUserServiceImpl implements AdminUserService {
         Role userRole;
         try {
             userRole = UserMapper.stringToRole(role);
-        } catch (InvalidRoleException ex) {
-            throw new IllegalArgumentException("Неверная роль пользователя: " + role);
+        } catch (IllegalArgumentException ex) {
             throw new IllegalArgumentException("Invalid role: " + role);
         }
 
