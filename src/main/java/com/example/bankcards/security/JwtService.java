@@ -1,9 +1,11 @@
 package com.example.bankcards.security;
 
+import com.example.bankcards.config.JwtConfig;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -12,13 +14,13 @@ import java.util.Date;
 import java.util.function.Function;
 
 @Component
+@RequiredArgsConstructor
 public class JwtService {
 
-    // TODO move secret to config or env variable
-    private final String SECRET = "j+qc+2AIYSJHw5/obRr8EYLNw7QFKJX86WioA/S2zSk=";
+    private final JwtConfig jwtConfig;
 
     private SecretKey getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET); // декодируем Base64
+        byte[] keyBytes = Decoders.BASE64.decode(jwtConfig.getSecret()); // декодируем Base64
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -28,7 +30,7 @@ public class JwtService {
                 .claim("id", user.getId())
                 .claim("role", user.getAuthorities())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 2))
+                .expiration(new Date(System.currentTimeMillis() + jwtConfig.getExpirationMs()))
                 .signWith(getSigningKey())
                 .compact();
     }
