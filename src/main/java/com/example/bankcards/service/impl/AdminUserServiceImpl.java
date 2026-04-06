@@ -77,12 +77,13 @@ public class AdminUserServiceImpl implements AdminUserService {
         if (dto.getEmail() != null && !dto.getEmail().isBlank()) {
             existingUser.setEmail(dto.getEmail());
         }
+        if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+            existingUser.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
         if (dto.getRole() != null) {
             existingUser.setRole(UserMapper.stringToRole(dto.getRole()));
         }
-
         UserEntity updatedUser = userRepository.save(existingUser);
-
         return userMapper.toDto(updatedUser);
     }
 
@@ -97,7 +98,6 @@ public class AdminUserServiceImpl implements AdminUserService {
         }
     }
 
-    // Метод без фильтра по роли
     private List<UserInfoResponseDTO> getAllUsersWithPaging(Pageable pageable) {
         Page<UserEntity> usersPage = userRepository.findAll(pageable);
         return usersPage.stream()
@@ -105,7 +105,6 @@ public class AdminUserServiceImpl implements AdminUserService {
                 .toList();
     }
 
-    // Метод с фильтром по роли
     private List<UserInfoResponseDTO> getUsersByRoleAndPaging(String role, Pageable pageable) {
         Role userRole;
         try {
